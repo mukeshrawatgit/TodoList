@@ -54,12 +54,12 @@ namespace TodoList.API.Controllers
 
 
            var checkuser1= await _userManager.FindByNameAsync("test");
-            if (checkuser1 != null)
+            if (checkuser1 == null)
             {
                 await _userManager.CreateAsync(testUser1, "pwd123");
             }
             var checkuser2 = await _userManager.FindByNameAsync("test1");
-            if (checkuser2 != null)
+            if (checkuser2 == null)
             {
                 await _userManager.CreateAsync(testUser2, "pwd1231");
             }
@@ -75,7 +75,7 @@ namespace TodoList.API.Controllers
         public async Task<ActionResult<string>> Login(Models.LoginUser iuser)
         {
                     //sign in
-            var signInResult = await _signInManager.PasswordSignInAsync(iuser.Email, iuser.Password, true, false);
+            var signInResult = await _signInManager.PasswordSignInAsync(iuser.User, iuser.Password, true, false);
 
             if (signInResult.Succeeded)
             {

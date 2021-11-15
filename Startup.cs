@@ -13,7 +13,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using TodoList.API.Controllers;
 using TodoList.API.Extensions;
-using TodoList.Context;
 using TodoList.Data.Contexts;
 using TodoList.Model;
 
@@ -40,23 +39,13 @@ namespace TodoList
             services.AddMvc();
             services.AddControllers();
             services.ConfigureJwtAuthentication(Configuration);
-            services.ConfigureIdentity();
-            //// AddIdentity :-  Registers the services
-            //services.AddIdentity<User, IdentityRole>(config =>
-            //{
-            //    // User defined password policy settings.
-            //    config.Password.RequiredLength = 4;
-            //    config.Password.RequireDigit = false;
-            //    config.Password.RequireNonAlphanumeric = false;
-            //    config.Password.RequireUppercase = false;
-            //})
-            //    .AddEntityFrameworkStores<TodoContext>()
-            //    .AddDefaultTokenProviders();
-
+             services.ConfigureIdentity();
           
+         
 
-           
-           
+
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -51,11 +51,19 @@ namespace TodoList.API.Extensions
         /// </summary>
         public static void ConfigureIdentity(this IServiceCollection services)
         {
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<TodoContext>()
-                .AddDefaultTokenProviders();
+            services.AddIdentity<User, IdentityRole>(config =>
+            {
+                // User defined password policy settings.
+                config.Password.RequiredLength = 4;
+                config.Password.RequireDigit = false;
+                config.Password.RequireNonAlphanumeric = false;
+                config.Password.RequireUppercase = false;
+            })
+              .AddEntityFrameworkStores<TodoContext>()
+              .AddDefaultTokenProviders();
 
-   
+
+
         }
 
         /// <summary>
