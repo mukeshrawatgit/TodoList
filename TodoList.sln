@@ -17,6 +17,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TodoList.UnitTests", "..\TodoList.UnitTests\TodoList.UnitTests.csproj", "{61570A1B-52BA-41A4-8ACB-505AD9779B2F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{23251F89-5CCB-4AC1-B3B8-176B621F9D8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todolist.UI", "..\Todolist.UI\Todolist.UI.csproj", "{F603B014-13B0-4DAA-ADD3-C2488EF4A111}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,12 +51,17 @@ Global
 		{61570A1B-52BA-41A4-8ACB-505AD9779B2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61570A1B-52BA-41A4-8ACB-505AD9779B2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61570A1B-52BA-41A4-8ACB-505AD9779B2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F603B014-13B0-4DAA-ADD3-C2488EF4A111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F603B014-13B0-4DAA-ADD3-C2488EF4A111}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F603B014-13B0-4DAA-ADD3-C2488EF4A111}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F603B014-13B0-4DAA-ADD3-C2488EF4A111}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{61570A1B-52BA-41A4-8ACB-505AD9779B2F} = {ACA7055B-1423-4182-A1FE-E82910EE3643}
+		{F603B014-13B0-4DAA-ADD3-C2488EF4A111} = {23251F89-5CCB-4AC1-B3B8-176B621F9D8F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A89A6244-BCDE-4A98-9CA7-A56316AB9497}
