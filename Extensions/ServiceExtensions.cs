@@ -23,48 +23,38 @@ namespace TodoList.API.Extensions
         /// <summary>
         /// Configures JSON Web Token authentication scheme.
         /// </summary>
-        public static void ConfigureJwtAuthentication(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection ConfigureJwtAuthentication(this IServiceCollection services, IConfiguration config)
         {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
+          //  var secret = config.GetSection("Authentication:JWT:").GetSection("SecurityKey").Value;
 
-                        ValidIssuer = config["Authentication:JWT:Issuer"],
-                        ValidAudience = config["Authentication:JWT:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(config["Authentication:JWT:SecurityKey"]))
-                    };
-                });
-            services.AddAuthorization();
+           // var key = Encoding.ASCII.GetBytes(config["Authentication:JWT:SecurityKey"]);
+            var secret = config["Authentication:JWT:SecurityKey"];
 
-        }
-
-        /// <summary>
-        /// Configures identity services.
-        /// </summary>
-        public static void ConfigureIdentity(this IServiceCollection services)
-        {
-            services.AddIdentity<User, IdentityRole>(config =>
+            var key = Encoding.ASCII.GetBytes(secret);
+            services.AddAuthentication(x =>
             {
-                // User defined password policy settings.
-                config.Password.RequiredLength = 4;
-                config.Password.RequireDigit = false;
-                config.Password.RequireNonAlphanumeric = false;
-                config.Password.RequireUppercase = false;
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-              .AddEntityFrameworkStores<TodoContext>()
-              .AddDefaultTokenProviders();
+            .AddJwtBearer(x =>
+            {
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                     ValidIssuer = "https://localhost:27667/",
+                    ValidAudience = "https://localhost:27667/"
+                };
+            });
 
-
+            return services;
+         
 
         }
+
+       
 
         /// <summary>
         /// Configures repository and service.

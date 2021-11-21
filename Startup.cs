@@ -32,16 +32,20 @@ namespace TodoList
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+           
             //In Memory database
             services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()), ServiceLifetime.Singleton, ServiceLifetime.Singleton);
-            services.ConfigureRepository();
+           
+           services.ConfigureJwtAuthentication(Configuration);
+             services.ConfigureRepository();
             services.AddSwaggerGen();
+            services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
+            {
+                builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+            }));
+            // services.ConfigureIdentity();
             services.AddMvc();
-            services.AddControllers();
-            services.ConfigureJwtAuthentication(Configuration);
-             services.ConfigureIdentity();
-          
-         
+           
 
 
 
@@ -55,8 +59,8 @@ namespace TodoList
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors("ApiCorsPolicy");
 
-          
             app.UseSwagger();
             app.UseSwaggerUI(o =>
             {
@@ -66,7 +70,7 @@ namespace TodoList
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+          
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

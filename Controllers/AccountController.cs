@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using TodoList.Model;
+using TodoList.Models;
 
 namespace TodoList.API.Controllers
 {
@@ -17,84 +18,78 @@ namespace TodoList.API.Controllers
     public class AccountController : Controller
     {
 
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        //private readonly UserManager<User> _userManager;
+        //private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _config;
+        public List<LoginUser> userslst = new List<LoginUser>();
+        private readonly string _secret;
+        private readonly string _expDate;
 
-
-
-        public AccountController( UserManager<User> userManager, SignInManager<User> signInManager,
+        public AccountController(
             IConfiguration config)
         {
           
-            _userManager = userManager;
-            _signInManager = signInManager;
+         //   _userManager = userManager;
+           // _signInManager = signInManager;
             _config = config;
-        }
+            _secret = config["Authentication:JWT:SecurityKey"];
+            _expDate = "1440";
 
-        //Method Used to register dummy users.
-        [HttpPost()]
-        public async Task<ActionResult<bool>> Register()
-        {
-
-
-            var testUser1 = new TodoList.Model.User
+            var testUser1 = new LoginUser
             {
-                Email = "test",
-                UserName = "test",
+              User="test",
+              Password="pwd123"
 
             };
 
-            var testUser2 = new TodoList.Model.User
+            var testUser2 = new LoginUser
             {
-                Email = "test1",
-                UserName = "test1",
+                User = "test1",
+                Password = "pwd1231"
 
             };
-
-
-           var checkuser1= await _userManager.FindByNameAsync("test");
-            if (checkuser1 == null)
-            {
-                await _userManager.CreateAsync(testUser1, "pwd123");
-            }
-            var checkuser2 = await _userManager.FindByNameAsync("test1");
-            if (checkuser2 == null)
-            {
-                await _userManager.CreateAsync(testUser2, "pwd1231");
-            }
-
-            return Ok();
-
-
+            userslst.Add(testUser2);
+            userslst.Add(testUser1);
         }
 
+      
 
         //Login functionality
         [HttpPost()]
-        public async Task<ActionResult<string>> Login(Models.LoginUser iuser)
+        public async Task<ActionResult<string>> Login([FromBody]Models.LoginUser iuser)
         {
-                    //sign in
-            var signInResult = await _signInManager.PasswordSignInAsync(iuser.User, iuser.Password, true, false);
+            //sign in
+            var signInResult =  userslst.Any(x=>x.User == iuser.Username && x.Password == x.Password);
 
-            if (signInResult.Succeeded)
+            if (signInResult)
             {
-                var secretKey = new SymmetricSecurityKey(
-               Encoding.UTF8.GetBytes(_config.GetSection("Authentication:JWT:SecurityKey").Value));             
-                var signInCreds = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
-                var tokenOptions = new JwtSecurityToken(
-                    issuer:_config.GetSection("Authentication:JWT:Issuer").Value,
-                    audience:_config.GetSection("Authentication:JWT:Audience").Value,
-                    claims: new List<Claim>(),
-                    expires: DateTime.Now.AddMinutes(30),
-                    signingCredentials: signInCreds
-                );
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-                return Ok(new { Token = tokenString });
+                var tokenlist = GenerateSecurityToken(iuser.Username);
+                return Ok(new { Token = tokenlist });
             }
 
             return Unauthorized();
+        }
+
+        private string GenerateSecurityToken(string username)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.Name, username)
+                })
+            ,
+                Expires = DateTime.UtcNow.AddMinutes(double.Parse(_expDate)),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
+
         }
 
     }

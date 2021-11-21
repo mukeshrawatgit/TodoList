@@ -22,27 +22,27 @@ namespace TodoList.API.Controllers
     public class TodoItemController : Controller
     {
         public readonly ITodoItemService _todoItemService;
-        private readonly UserManager<User> _userManager;
+      
       //  private readonly SignInManager<User> _signInManager;
 
 
         private readonly IMapper _mapper;
-        public TodoItemController(ITodoItemService todoItemService, UserManager<User> userManager)
+        public TodoItemController(ITodoItemService todoItemService)
         {
             _todoItemService = todoItemService;
-            _userManager = userManager;
+         
          
         }
 
         /// <summary>
         /// Get List of todo items assigned to user
         /// </summary>        
-        [HttpPost()]
+        [HttpGet()]
         [ActionName("Getlist")]
-        public async Task<ActionResult<IList<TodoItem>>> GetTodoItems()
+        public async Task<ActionResult<IList<TodoItem>>> GetTodoItems(string user)
         {
 
-            var user = await _userManager.GetUserAsync(User);
+          //  var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 
@@ -52,7 +52,7 @@ namespace TodoList.API.Controllers
             {  
                 return Unauthorized();
             }
-            var todoitems = _todoItemService.GetTodoItems(user);     
+            var todoitems =  _todoItemService.GetTodoItems(user);     
             return Ok(todoitems);
         }
 
@@ -60,9 +60,9 @@ namespace TodoList.API.Controllers
         ///  Create todo item
         /// </summary>  
         [HttpPost]
-        public async Task<ActionResult<bool>> CreatetodoItem([FromBody] TodoItem item)
+        public async Task<ActionResult<bool>> CreatetodoItem([FromBody] TodoItem item,[FromQuery]string user)
         {
-            var user = await _userManager.GetUserAsync(User);
+           // var user = await _userManager.GetUserAsync(User);
             if (item == null)
             {             
                 return BadRequest();
@@ -75,10 +75,10 @@ namespace TodoList.API.Controllers
         ///  Update Todo item is isselected or not
         /// </summary> 
         [HttpPut()]
-        public async Task<ActionResult<bool>> UpdateItem([FromBody] TodoItem newItem)
+        public async Task<ActionResult<bool>> UpdateItem([FromBody] TodoItem newItem,string user)
         {
 
-            var user = await _userManager.GetUserAsync(User);
+        //    var user = await _userManager.GetUserAsync(User);
 
             if (newItem.Id == null)
             {          
@@ -91,15 +91,15 @@ namespace TodoList.API.Controllers
         /// <summary>
         /// Delete todo item based on  guid
         /// </summary>        
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteItem(Guid id)
+        [HttpDelete()]
+        public async Task<ActionResult> DeleteItem([FromQuery] Guid id, [FromQuery] string user)
         {
 
             if (id == null)
             {
                 return BadRequest();
             }
-            var user = await _userManager.GetUserAsync(User);
+            //var user = await _userManager.GetUserAsync(User);
             var issuccess = await _todoItemService.DeleteTodoItem(id,user);
             return Ok(issuccess);
         }
